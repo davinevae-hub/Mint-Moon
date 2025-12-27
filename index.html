@@ -3,17 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blossom Cycle (Prototype)</title>
+  <title>Blossom Cycle</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#FF4D88">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Optional: if you add icons later -->
+  <!-- <link rel="apple-touch-icon" href="icons/icon-192.png"> -->
 
   <!-- Cute fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --bg: #FFF7FB;
-      --card: #FFFFFF;
+      --card: rgba(255,255,255,.92);
       --pink: #FFB3C7;
       --hotpink:#FF4D88;
       --mint:#7EE7C3;
@@ -36,7 +45,7 @@
     }
 
     .app{
-      max-width: 980px;
+      max-width: 1020px;
       margin: 0 auto;
       padding: 18px 16px 36px;
     }
@@ -46,7 +55,7 @@
       align-items:center;
       justify-content:space-between;
       gap: 12px;
-      padding: 10px 6px 18px;
+      padding: 10px 6px 12px;
     }
 
     .brand{
@@ -89,26 +98,26 @@
       margin:2px 0 0;
       color: var(--muted);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .pill{
       padding: 10px 12px;
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.85);
       border: 1px solid rgba(58,27,46,.06);
       border-radius: 999px;
       box-shadow: 0 8px 24px rgba(58,27,46,.08);
       display:flex;
       align-items:center;
       gap:10px;
-      font-weight:700;
+      font-weight:900;
       color: var(--plum);
       white-space:nowrap;
     }
 
     .grid{
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
+      grid-template-columns: 1.15fr .85fr;
       gap: 14px;
     }
     @media (max-width: 900px){
@@ -116,7 +125,7 @@
     }
 
     .card{
-      background: rgba(255,255,255,.9);
+      background: var(--card);
       border: 1px solid rgba(58,27,46,.06);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
@@ -134,7 +143,7 @@
     .sub{
       margin: -6px 0 10px;
       color: var(--muted);
-      font-weight: 600;
+      font-weight: 800;
       font-size: 13px;
     }
 
@@ -149,7 +158,7 @@
       cursor:pointer;
       padding: 12px 12px;
       border-radius: 16px;
-      font-weight: 800;
+      font-weight: 900;
       font-family: "Nunito", sans-serif;
       transition: transform .06s ease, filter .2s ease;
       display:flex;
@@ -197,14 +206,21 @@
     }
     .tile .label{
       color: var(--muted);
-      font-weight: 800;
+      font-weight: 900;
       font-size: 12px;
       letter-spacing: .2px;
     }
     .tile .value{
       margin-top: 6px;
       font-weight: 900;
-      font-size: 16px;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .divider{
+      height: 1px;
+      background: rgba(58,27,46,.08);
+      margin: 12px 0;
     }
 
     .calendar{
@@ -220,7 +236,10 @@
     .cal-head .month{
       font-family:"Baloo 2", cursive;
       font-size: 18px;
+      text-align:center;
+      flex: 1;
     }
+
     .cal-grid{
       display:grid;
       grid-template-columns: repeat(7, 1fr);
@@ -236,7 +255,7 @@
     .day{
       aspect-ratio: 1 / 1;
       border-radius: 18px;
-      background: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.78);
       border: 1px solid rgba(58,27,46,.06);
       display:flex;
       flex-direction:column;
@@ -249,7 +268,7 @@
     .day .num{
       font-weight: 900;
       font-size: 12px;
-      color: rgba(58,27,46,.8);
+      color: rgba(58,27,46,.85);
     }
     .badge{
       margin-top: 6px;
@@ -260,22 +279,18 @@
       display:inline-flex;
       align-items:center;
       gap: 6px;
+      white-space:nowrap;
     }
     .b-period{ background: rgba(255,59,48,.14); color: #8E1410; border: 1px solid rgba(255,59,48,.25); }
     .b-pred{ background: rgba(255,77,136,.12); color: #7A0832; border: 1px solid rgba(255,77,136,.22); }
     .b-fert{ background: rgba(46,184,114,.14); color: #0A5A33; border: 1px solid rgba(46,184,114,.22); }
+    .b-check{ background: rgba(255,255,255,.65); color: rgba(58,27,46,.85); border: 1px solid rgba(58,27,46,.10); }
 
     .tiny{
       font-size: 12px;
       color: var(--muted);
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .divider{
-      height: 1px;
-      background: rgba(58,27,46,.08);
-      margin: 12px 0;
+      font-weight: 800;
+      line-height: 1.4;
     }
 
     .chips{
@@ -288,7 +303,7 @@
       border-radius: 999px;
       padding: 10px 12px;
       border: 1px solid rgba(58,27,46,.10);
-      background: rgba(255,255,255,.7);
+      background: rgba(255,255,255,.72);
       font-weight: 900;
       user-select:none;
       display:flex;
@@ -333,8 +348,45 @@
       border-radius: 12px;
       border: 1px solid rgba(58,27,46,.12);
       outline:none;
-      background: rgba(255,255,255,.85);
+      background: rgba(255,255,255,.88);
       color: var(--plum);
+    }
+
+    .top-guide{
+      margin: 0 6px 14px;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,179,199,.28), rgba(126,231,195,.18));
+      border: 1px solid rgba(58,27,46,.06);
+      box-shadow: 0 12px 30px rgba(58,27,46,.08);
+    }
+    .top-guide h2{
+      font-family:"Baloo 2", cursive;
+      margin: 0 0 6px;
+      font-size: 18px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .steps{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: rgba(58,27,46,.92);
+      font-weight: 800;
+      line-height: 1.35;
+      font-size: 13px;
+    }
+    .steps li{ margin: 6px 0; }
+
+    .footer-note{
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(58,27,46,.78);
+      font-weight: 800;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.58);
+      border: 1px solid rgba(58,27,46,.06);
     }
 
     .toast{
@@ -347,7 +399,7 @@
       padding: 12px 14px;
       border-radius: 14px;
       box-shadow: 0 20px 40px rgba(0,0,0,.20);
-      font-weight: 800;
+      font-weight: 900;
       opacity: 0;
       pointer-events:none;
       transition: opacity .25s ease, transform .25s ease;
@@ -356,17 +408,6 @@
     .toast.show{
       opacity: 1;
       transform: translateX(-50%) translateY(-6px);
-    }
-
-    .footer-note{
-      margin-top: 10px;
-      font-size: 12px;
-      color: rgba(58,27,46,.70);
-      font-weight: 700;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.55);
-      border: 1px solid rgba(58,27,46,.06);
     }
   </style>
 </head>
@@ -378,17 +419,39 @@
         <div class="logo" aria-hidden="true"><span>🌸</span></div>
         <div class="title">
           <h1>Blossom Cycle</h1>
-          <p>Sweet, simple cycle tracking — on this device only</p>
+          <p>Simple period tracking — stays on this device</p>
         </div>
       </div>
       <div class="pill" id="todayPill">Today: —</div>
     </header>
 
+    <!-- TOP INSTRUCTIONS (simplified for younger teens) -->
+    <section class="top-guide" aria-label="Instructions">
+      <h2>✨ How to use this</h2>
+      <div class="tiny">
+        This app is for tracking your period. It’s private.
+        <strong>Nothing gets shared.</strong>
+      </div>
+
+      <ol class="steps">
+        <li>When your period starts, tap <strong>“Period started”</strong>.</li>
+        <li>When it ends, tap <strong>“Period ended”</strong>.</li>
+        <li>If you want, do a <strong>Daily check-in</strong> (mood + symptoms).</li>
+        <li>Want quick access? Tap <strong>“Add to Home Screen”</strong> on the right.</li>
+        <li>Need a copy? Tap <strong>“Download this month”</strong> to save/print.</li>
+      </ol>
+
+      <div class="footer-note">
+        <strong>Quick note:</strong> The calendar shows “guesses” based on averages.
+        Bodies can change from stress, school, sports, sickness, or growing.
+      </div>
+    </section>
+
     <div class="grid">
       <!-- LEFT -->
       <section class="card">
-        <h2>✨ Today</h2>
-        <p class="sub" id="statusLine">Let’s get you set up.</p>
+        <h2>🌷 Today</h2>
+        <p class="sub" id="statusLine">Save your setup, then start tracking.</p>
 
         <div class="row">
           <button class="btn btn-primary" id="btnStart"><span>🩸</span>Period started</button>
@@ -397,17 +460,17 @@
           <button class="btn btn-danger" id="btnReset"><span>🧼</span>Reset (local)</button>
         </div>
 
-        <div class="kpi" aria-label="Predictions">
+        <div class="kpi" aria-label="Helpful guesses">
           <div class="tile">
-            <div class="label">NEXT PERIOD (EST.)</div>
+            <div class="label">NEXT PERIOD (GUESS)</div>
             <div class="value" id="kpiNext">—</div>
           </div>
           <div class="tile">
-            <div class="label">FERTILE WINDOW (EST.)</div>
+            <div class="label">GREEN DAYS (GUESS)</div>
             <div class="value" id="kpiFert">—</div>
           </div>
           <div class="tile">
-            <div class="label">AVG CYCLE / PERIOD</div>
+            <div class="label">YOUR SETTINGS</div>
             <div class="value" id="kpiAvg">—</div>
           </div>
         </div>
@@ -421,45 +484,50 @@
           <button class="btn btn-ghost" id="nextMonth">▶</button>
         </div>
 
+        <div class="row" style="margin-bottom:10px;">
+          <button class="btn btn-primary" id="btnDownloadMonth"><span>📥</span>Download this month</button>
+          <button class="btn btn-ghost" id="btnPrintMonth"><span>🖨️</span>Print this month</button>
+        </div>
+
         <div class="cal-grid" id="dowRow"></div>
         <div class="cal-grid calendar" id="calGrid"></div>
 
         <div class="footer-note">
-          <strong>Friendly note:</strong> predictions are estimates based on averages and may be off (stress, illness, growth, travel, etc. can shift cycles).
-          If bleeding is very heavy, pain is severe, periods are absent for months, or there are concerns—talk with a trusted adult and a clinician.
+          <strong>Important:</strong> This app helps you notice patterns. It is not birth control and not medical advice.
+          If bleeding is very heavy, pain is strong, or something feels wrong, talk to a trusted adult and a clinician.
         </div>
       </section>
 
       <!-- RIGHT -->
       <aside class="card">
         <h2>🎀 Setup</h2>
-        <p class="sub">Make it yours (you can change these anytime).</p>
+        <p class="sub">You can change this anytime.</p>
 
         <div class="inputs">
           <div class="field">
-            <label for="cycleLen">Average cycle length (days)</label>
+            <label for="cycleLen">How many days between periods?</label>
             <input id="cycleLen" type="number" min="15" max="60" placeholder="Example: 28">
           </div>
           <div class="field">
-            <label for="periodLen">Typical period length (days)</label>
+            <label for="periodLen">How many days does your period last?</label>
             <input id="periodLen" type="number" min="1" max="12" placeholder="Example: 5">
           </div>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <button class="btn btn-primary" id="btnSave"><span>💾</span>Save setup</button>
-          <button class="btn btn-ghost" id="btnDemo"><span>🧁</span>Load demo data</button>
+          <button class="btn btn-ghost" id="btnDemo"><span>🧁</span>Try demo</button>
         </div>
 
         <div class="divider"></div>
 
         <h2>💖 Daily check-in</h2>
-        <p class="tiny">Tap what fits today (fast + no big forms).</p>
+        <p class="tiny">Tap what fits today. You can skip anytime.</p>
 
         <div class="tiny" style="margin:10px 0 6px;">Mood</div>
         <div class="chips" id="moodChips"></div>
 
-        <div class="tiny" style="margin:12px 0 6px;">Symptoms</div>
+        <div class="tiny" style="margin:12px 0 6px;">Body</div>
         <div class="chips" id="symptomChips"></div>
 
         <div class="row" style="margin-top:10px;">
@@ -469,10 +537,21 @@
 
         <div class="divider"></div>
 
+        <h2>📲 Add to Home Screen</h2>
+        <p class="tiny" id="installHelp">
+          iPhone: open in Safari → Share → “Add to Home Screen”.<br>
+          Android: Chrome → Menu (⋮) → “Add to Home Screen”.
+        </p>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn btn-primary" id="btnInstall" style="display:none;"><span>⬇️</span>Install app</button>
+        </div>
+
+        <div class="divider"></div>
+
         <h2>🔒 Privacy</h2>
         <p class="tiny">
-          This prototype stores data <strong>only in your browser</strong> (localStorage). No accounts. No cloud. No tracking.
-          If you want, we can add a simple PIN screen next.
+          This app saves your info only on this device (local storage). No accounts. No cloud. No sharing.
         </p>
       </aside>
     </div>
@@ -482,21 +561,54 @@
 
 <script>
   // -----------------------------
+  // PWA: Register Service Worker
+  // -----------------------------
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async () => {
+      try { await navigator.serviceWorker.register("./sw.js"); }
+      catch (e) { /* silent */ }
+    });
+  }
+
+  // -----------------------------
+  // PWA: Install prompt (mainly Android/Chrome)
+  // -----------------------------
+  let deferredPrompt = null;
+  const btnInstall = document.getElementById("btnInstall");
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    btnInstall.style.display = "inline-flex";
+  });
+
+  btnInstall.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    btnInstall.style.display = "none";
+  });
+
+  // Helpful iOS text detection
+  (function(){
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = isIOS && /safari/i.test(navigator.userAgent) && !/crios|fxios|opios/i.test(navigator.userAgent);
+    const help = document.getElementById("installHelp");
+
+    if (isIOS && !isSafari) {
+      help.textContent = "On iPhone, open this in Safari, then Share → Add to Home Screen.";
+    }
+  })();
+
+  // -----------------------------
   // Data model (local-only)
   // -----------------------------
-  const STORAGE_KEY = "blossom_cycle_v1";
+  const STORAGE_KEY = "blossom_cycle_v2";
 
   const defaultState = () => ({
-    settings: {
-      avgCycleLen: 28,
-      avgPeriodLen: 5
-    },
-    periods: [
-      // { start: "YYYY-MM-DD", end: "YYYY-MM-DD" | null }
-    ],
-    checkins: {
-      // "YYYY-MM-DD": { mood: [..], symptoms: [..] }
-    }
+    settings: { avgCycleLen: 28, avgPeriodLen: 5 },
+    periods: [],
+    checkins: {} // "YYYY-MM-DD": { mood:[], symptoms:[] }
   });
 
   function loadState(){
@@ -543,13 +655,13 @@
     t.classList.add("show");
     setTimeout(()=>t.classList.remove("show"), 1400);
   }
+  function safeNum(v){ return Number.isFinite(Number(v)) ? Number(v) : null; }
 
   // -----------------------------
   // Prediction logic (simple averages)
   // -----------------------------
   function getLastPeriod(){
     if(!state.periods.length) return null;
-    // Last by start date
     const sorted = [...state.periods].sort((a,b)=>a.start.localeCompare(b.start));
     return sorted[sorted.length - 1];
   }
@@ -571,17 +683,16 @@
     return { start: toISODate(s), end: toISODate(e) };
   }
 
-  function estimateFertileWindow(){
-    // Common teaching estimate: ovulation ~14 days before next period in a typical cycle.
-    // This varies widely; we label as estimate.
+  function estimateGreenDays(){
+    // Teen-friendly phrasing: “green days” = days your body *might* be more active.
+    // Estimate ovulation ~ 14 days before next period (varies a lot).
     const nextStart = estimateNextPeriodStart();
     if(!nextStart) return null;
     const next = fromISODate(nextStart);
-    const ovulation = addDays(next, -14);
-    // Fertile window often approximated as 5 days before ovulation through ovulation day.
-    const start = addDays(ovulation, -5);
-    const end = ovulation;
-    return { start: toISODate(start), end: toISODate(end), ovu: toISODate(ovulation) };
+    const ovulationGuess = addDays(next, -14);
+    const start = addDays(ovulationGuess, -5);
+    const end = ovulationGuess;
+    return { start: toISODate(start), end: toISODate(end), mid: toISODate(ovulationGuess) };
   }
 
   function isDateInRange(iso, range){
@@ -594,7 +705,7 @@
     for(const p of state.periods){
       if(!p.start) continue;
       const start = fromISODate(p.start);
-      const end = p.end ? fromISODate(p.end) : start; // if ongoing, mark start only
+      const end = p.end ? fromISODate(p.end) : start;
       let cur = new Date(start);
       while(cur <= end){
         set.add(toISODate(cur));
@@ -605,7 +716,7 @@
   }
 
   // -----------------------------
-  // UI: Setup + Today header
+  // UI state
   // -----------------------------
   const today = new Date();
   const todayISO = toISODate(today);
@@ -614,32 +725,36 @@
     document.getElementById("todayPill").textContent =
       `Today: ${today.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" })}`;
 
-    // Status line
     const last = getLastPeriod();
-    let status = "Tap “Daily check-in” to log mood + symptoms ✨";
+    let status = "You can tap Daily check-in if you want. (It’s optional.)";
     if(last?.start && !last.end){
-      status = `You’re currently on your period (started ${fmtShort(last.start)}).`;
+      status = `Period is happening now (started ${fmtShort(last.start)}).`;
     } else if(last?.end){
       status = `Last period ended ${fmtShort(last.end)}.`;
     } else if(!state.periods.length){
-      status = "Start by saving setup, then tap “Period started” when it begins.";
+      status = "When your period starts, tap “Period started”.";
     }
     document.getElementById("statusLine").textContent = status;
 
-    // KPIs
     const next = estimateNextPeriodStart();
-    const fert = estimateFertileWindow();
+    const green = estimateGreenDays();
+
     document.getElementById("kpiNext").textContent = next ? fmtShort(next) : "—";
-    if(fert){
+
+    if(green){
       document.getElementById("kpiFert").textContent =
-        `${fmtShort(fert.start)}–${fmtShort(fert.end)} (ovu ~ ${fmtShort(fert.ovu)})`;
+        `${fmtShort(green.start)}–${fmtShort(green.end)}`;
     } else {
       document.getElementById("kpiFert").textContent = "—";
     }
+
     document.getElementById("kpiAvg").textContent =
-      `${state.settings.avgCycleLen}d / ${state.settings.avgPeriodLen}d`;
+      `${state.settings.avgCycleLen} days • period ~ ${state.settings.avgPeriodLen} days`;
   }
 
+  // -----------------------------
+  // Setup
+  // -----------------------------
   function bindSetup(){
     const cycle = document.getElementById("cycleLen");
     const period = document.getElementById("periodLen");
@@ -647,28 +762,27 @@
     period.value = state.settings.avgPeriodLen;
 
     document.getElementById("btnSave").addEventListener("click", ()=>{
-      const c = Number(cycle.value);
-      const p = Number(period.value);
+      const c = safeNum(cycle.value);
+      const p = safeNum(period.value);
 
-      // Basic guardrails
-      if(!Number.isFinite(c) || c < 15 || c > 60){
-        toast("Cycle length looks off (15–60).");
+      // Basic guardrails (teen-friendly messaging)
+      if(c === null || c < 15 || c > 60){
+        toast("Try a number like 21–35.");
         return;
       }
-      if(!Number.isFinite(p) || p < 1 || p > 12){
-        toast("Period length looks off (1–12).");
+      if(p === null || p < 1 || p > 12){
+        toast("Try a number like 3–7.");
         return;
       }
 
       state.settings.avgCycleLen = c;
       state.settings.avgPeriodLen = p;
       saveState();
-      toast("Saved setup!");
+      toast("Setup saved!");
       refreshAll();
     });
 
     document.getElementById("btnDemo").addEventListener("click", ()=>{
-      // Demo data: two periods
       const t = new Date();
       const p1s = toISODate(addDays(t, -55));
       const p1e = toISODate(addDays(t, -51));
@@ -694,29 +808,29 @@
   function startPeriod(){
     const last = getLastPeriod();
     if(last && !last.end){
-      toast("Period already in progress.");
+      toast("You already started it.");
       return;
     }
     state.periods.push({ start: todayISO, end: null });
     saveState();
-    toast("Logged: started!");
+    toast("Saved: period started!");
     refreshAll();
   }
 
   function endPeriod(){
     const last = getLastPeriod();
     if(!last || last.end){
-      toast("No active period to end.");
+      toast("No period to end.");
       return;
     }
     last.end = todayISO;
     saveState();
-    toast("Logged: ended!");
+    toast("Saved: period ended!");
     refreshAll();
   }
 
   // -----------------------------
-  // Check-in chips
+  // Check-in chips (simple words)
   // -----------------------------
   const moods = [
     { key:"happy", label:"😊 Happy" },
@@ -725,17 +839,17 @@
     { key:"stressed", label:"😵‍💫 Stressed" },
     { key:"sad", label:"😔 Sad" },
     { key:"confident", label:"😌 Confident" },
-    { key:"irritable", label:"😤 Irritable" }
+    { key:"grumpy", label:"😤 Grumpy" }
   ];
 
   const symptoms = [
     { key:"cramps", label:"🔥 Cramps" },
     { key:"headache", label:"🤕 Headache" },
-    { key:"bloating", label:"🎈 Bloating" },
+    { key:"bloating", label:"🎈 Bloated" },
     { key:"acne", label:"🌙 Acne" },
-    { key:"tender", label:"💗 Tender boobs" },
+    { key:"tender", label:"💗 Tender chest" },
     { key:"nausea", label:"🤢 Nausea" },
-    { key:"backache", label:"🧍 Backache" },
+    { key:"back", label:"🧍 Back hurt" },
     { key:"sleepy", label:"🛌 Sleepy" }
   ];
 
@@ -773,6 +887,7 @@
     };
     saveState();
     toast("Check-in saved!");
+    refreshAll(); // so calendar shows ⭐
   }
 
   function clearCheckin(){
@@ -784,7 +899,7 @@
   }
 
   // -----------------------------
-  // Calendar rendering
+  // Calendar
   // -----------------------------
   let viewYear = today.getFullYear();
   let viewMonth = today.getMonth(); // 0-based
@@ -815,9 +930,8 @@
 
     const periodSet = getPeriodDatesSet();
     const predPeriod = estimateNextPeriodWindow();
-    const fert = estimateFertileWindow();
+    const green = estimateGreenDays();
 
-    // Blank days before month starts
     for(let i=0;i<startDow;i++){
       const blank = document.createElement("div");
       blank.className = "day";
@@ -837,7 +951,6 @@
       num.textContent = day;
       cell.appendChild(num);
 
-      // Stickers/badges
       if(periodSet.has(iso)){
         const b = document.createElement("div");
         b.className = "badge b-period";
@@ -846,29 +959,167 @@
       } else if(isDateInRange(iso, predPeriod)){
         const b = document.createElement("div");
         b.className = "badge b-pred";
-        b.textContent = "🎀 Pred";
+        b.textContent = "🎀 Guess";
         cell.appendChild(b);
-      } else if(isDateInRange(iso, fert)){
+      } else if(isDateInRange(iso, green)){
         const b = document.createElement("div");
         b.className = "badge b-fert";
-        b.textContent = "🌿 Fertile";
+        b.textContent = "🌿 Green";
         cell.appendChild(b);
       }
 
-      // Mini indicator for check-in
       const ci = state.checkins[iso];
       if(ci && (ci.mood?.length || ci.symptoms?.length)){
         const b = document.createElement("div");
-        b.className = "badge";
-        b.style.background = "rgba(255,255,255,.65)";
-        b.style.border = "1px solid rgba(58,27,46,.10)";
-        b.style.color = "rgba(58,27,46,.85)";
-        b.textContent = "⭐ Check-in";
+        b.className = "badge b-check";
+        b.textContent = "⭐ Check";
         cell.appendChild(b);
       }
 
       grid.appendChild(cell);
     }
+  }
+
+  // -----------------------------
+  // Download / Print monthly calendar
+  // - Downloads an HTML file for the current month.
+  // - User can open it and "Print to PDF" on phone/desktop.
+  // -----------------------------
+  function buildMonthExportHTML(year, month){
+    const first = new Date(year, month, 1);
+    const monthName = first.toLocaleDateString(undefined, { month:"long", year:"numeric" });
+    const startDow = first.getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+
+    const periodSet = getPeriodDatesSet();
+    const predPeriod = estimateNextPeriodWindow();
+    const green = estimateGreenDays();
+
+    // Build a simple printable grid
+    let cells = "";
+
+    // Blank cells
+    for(let i=0;i<startDow;i++){
+      cells += `<div class="cell blank"></div>`;
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(year, month, day);
+      const iso = toISODate(d);
+
+      const tags = [];
+      if(periodSet.has(iso)) tags.push(`<span class="tag period">🩸 Period</span>`);
+      if(!periodSet.has(iso) && isDateInRange(iso, predPeriod)) tags.push(`<span class="tag guess">🎀 Guess</span>`);
+      if(!periodSet.has(iso) && isDateInRange(iso, green)) tags.push(`<span class="tag green">🌿 Green</span>`);
+
+      const ci = state.checkins[iso];
+      if(ci && (ci.mood?.length || ci.symptoms?.length)) tags.push(`<span class="tag check">⭐ Check-in</span>`);
+
+      // Optional: include check-in details (short)
+      let details = "";
+      if(ci){
+        const moodText = (ci.mood || []).map(k => (moods.find(m=>m.key===k)?.label || k)).join(", ");
+        const symText  = (ci.symptoms || []).map(k => (symptoms.find(s=>s.key===k)?.label || k)).join(", ");
+        const lines = [];
+        if(moodText) lines.push(`<div class="small"><strong>Mood:</strong> ${escapeHTML(moodText)}</div>`);
+        if(symText)  lines.push(`<div class="small"><strong>Body:</strong> ${escapeHTML(symText)}</div>`);
+        if(lines.length) details = `<div class="details">${lines.join("")}</div>`;
+      }
+
+      cells += `
+        <div class="cell">
+          <div class="num">${day}</div>
+          <div class="tags">${tags.join("")}</div>
+          ${details}
+        </div>
+      `;
+    }
+
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${monthName} • Blossom Cycle</title>
+  <style>
+    body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 18px; color:#3A1B2E; }
+    h1{ margin: 0 0 6px; }
+    .note{ margin: 0 0 14px; color:#7A5A6C; font-weight:600; }
+    .grid{ display:grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+    .dow{ font-weight:800; text-align:center; color:#7A5A6C; }
+    .cell{ border: 1px solid rgba(58,27,46,.12); border-radius: 14px; padding: 10px; min-height: 90px; }
+    .blank{ border: none; }
+    .num{ font-weight:900; margin-bottom: 6px; }
+    .tags{ display:flex; flex-wrap:wrap; gap: 6px; margin-bottom: 6px; }
+    .tag{ font-size: 12px; font-weight:800; padding: 4px 8px; border-radius: 999px; border: 1px solid rgba(58,27,46,.12); background: rgba(255,255,255,.7); }
+    .period{ background: rgba(255,59,48,.14); border-color: rgba(255,59,48,.22); color:#8E1410; }
+    .guess{ background: rgba(255,77,136,.12); border-color: rgba(255,77,136,.22); color:#7A0832; }
+    .green{ background: rgba(46,184,114,.14); border-color: rgba(46,184,114,.22); color:#0A5A33; }
+    .check{ background: rgba(58,27,46,.06); }
+    .details{ margin-top: 6px; }
+    .small{ font-size: 12px; color:#3A1B2E; margin: 2px 0; }
+    .footer{ margin-top: 14px; font-size: 12px; color:#7A5A6C; font-weight:600; }
+    @media print{
+      body{ margin: 0.4in; }
+      .cell{ break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>${monthName}</h1>
+  <p class="note">This is your monthly calendar from Blossom Cycle. You can print this page to save as a PDF.</p>
+
+  <div class="grid">
+    <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+    ${cells}
+  </div>
+
+  <div class="footer">
+    “Guess” and “Green” days are estimates based on averages. Bodies can change.
+  </div>
+</body>
+</html>`;
+  }
+
+  function escapeHTML(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function downloadTextFile(filename, content, mime="text/html"){
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function downloadThisMonth(){
+    const first = new Date(viewYear, viewMonth, 1);
+    const filename = `BlossomCycle_${first.getFullYear()}-${pad(first.getMonth()+1)}.html`;
+    const html = buildMonthExportHTML(viewYear, viewMonth);
+    downloadTextFile(filename, html, "text/html");
+    toast("Downloaded! Open it and print to PDF if you want.");
+  }
+
+  function printThisMonth(){
+    // Open printable view in a new tab and trigger print
+    const html = buildMonthExportHTML(viewYear, viewMonth);
+    const w = window.open("", "_blank");
+    if(!w){ toast("Pop-up blocked. Try download instead."); return; }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    setTimeout(()=>w.print(), 400);
   }
 
   // -----------------------------
@@ -879,7 +1130,6 @@
     document.getElementById("btnEnd").addEventListener("click", endPeriod);
 
     document.getElementById("btnLog").addEventListener("click", ()=>{
-      // Scroll to the check-in area (right panel)
       document.querySelector("aside.card").scrollIntoView({ behavior:"smooth", block:"start" });
       toast("Check-in is on the right!");
     });
@@ -898,11 +1148,13 @@
       renderCalendar();
     });
 
+    document.getElementById("btnDownloadMonth").addEventListener("click", downloadThisMonth);
+    document.getElementById("btnPrintMonth").addEventListener("click", printThisMonth);
+
     document.getElementById("btnReset").addEventListener("click", ()=>{
-      // Local reset only
       localStorage.removeItem(STORAGE_KEY);
       state = defaultState();
-      toast("Reset done (local).");
+      toast("Reset done (only on this device).");
       refreshAll();
     });
   }
@@ -914,7 +1166,7 @@
     refreshHeader();
     renderDows();
     renderCalendar();
-    // sync setup fields
+
     document.getElementById("cycleLen").value = state.settings.avgCycleLen;
     document.getElementById("periodLen").value = state.settings.avgPeriodLen;
     loadCheckinForToday();
