@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blossom Cycle (Prototype)</title>
+
+  <!-- Cute fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #FFF7FB;
+      --card: #FFFFFF;
+      --pink: #FFB3C7;
+      --hotpink:#FF4D88;
+      --mint:#7EE7C3;
+      --green:#2EB872;
+      --red:#FF3B30;
+      --plum:#3A1B2E;
+      --muted:#7A5A6C;
+      --shadow: 0 10px 30px rgba(58,27,46,.10);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(900px 500px at 30% 0%, rgba(255,179,199,.55), transparent 55%),
+                  radial-gradient(900px 500px at 80% 20%, rgba(126,231,195,.45), transparent 60%),
+                  var(--bg);
+      color: var(--plum);
+    }
+
+    .app{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px 36px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 6px 18px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+    }
+
+    .logo{
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--hotpink), var(--pink));
+      display:grid;
+      place-items:center;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), transparent 45%);
+      transform: rotate(20deg);
+    }
+    .logo span{
+      position: relative;
+      font-size: 22px;
+      filter: drop-shadow(0 4px 8px rgba(58,27,46,.15));
+    }
+
+    .title h1{
+      font-family:"Baloo 2", cursive;
+      font-size: 22px;
+      line-height: 1.1;
+      margin:0;
+    }
+    .title p{
+      margin:2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .pill{
+      padding: 10px 12px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(58,27,46,.06);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(58,27,46,.08);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      color: var(--plum);
+      white-space:nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(58,27,46,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .card h2{
+      font-family:"Baloo 2", cursive;
+      margin: 0 0 10px;
+      font-size: 18px;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .sub{
+      margin: -6px 0 10px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      padding: 12px 12px;
+      border-radius: 16px;
+      font-weight: 800;
+      font-family: "Nunito", sans-serif;
+      transition: transform .06s ease, filter .2s ease;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      user-select:none;
+    }
+    .btn:active{ transform: scale(.98); }
+
+    .btn-primary{
+      background: linear-gradient(135deg, var(--hotpink), var(--pink));
+      color: white;
+      box-shadow: 0 10px 25px rgba(255,77,136,.25);
+    }
+    .btn-mint{
+      background: linear-gradient(135deg, var(--green), var(--mint));
+      color: #062115;
+      box-shadow: 0 10px 25px rgba(46,184,114,.18);
+    }
+    .btn-ghost{
+      background: rgba(255,255,255,.7);
+      border: 1px dashed rgba(58,27,46,.18);
+      color: var(--plum);
+    }
+    .btn-danger{
+      background: linear-gradient(135deg, var(--red), #FF7A6E);
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(255,59,48,.20);
+    }
+
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 560px){
+      .kpi{ grid-template-columns: 1fr; }
+    }
+    .kpi .tile{
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(58,27,46,.06);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .tile .label{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .2px;
+    }
+    .tile .value{
+      margin-top: 6px;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .calendar{
+      margin-top: 10px;
+    }
+    .cal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cal-head .month{
+      font-family:"Baloo 2", cursive;
+      font-size: 18px;
+    }
+    .cal-grid{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    .dow{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      text-align:center;
+      padding: 6px 0;
+    }
+    .day{
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(58,27,46,.06);
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:flex-start;
+      padding: 8px;
+      position: relative;
+      overflow:hidden;
+    }
+    .day .num{
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(58,27,46,.8);
+    }
+    .badge{
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 6px 8px;
+      border-radius: 999px;
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+    }
+    .b-period{ background: rgba(255,59,48,.14); color: #8E1410; border: 1px solid rgba(255,59,48,.25); }
+    .b-pred{ background: rgba(255,77,136,.12); color: #7A0832; border: 1px solid rgba(255,77,136,.22); }
+    .b-fert{ background: rgba(46,184,114,.14); color: #0A5A33; border: 1px solid rgba(46,184,114,.22); }
+
+    .tiny{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .divider{
+      height: 1px;
+      background: rgba(58,27,46,.08);
+      margin: 12px 0;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+    }
+    .chip{
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid rgba(58,27,46,.10);
+      background: rgba(255,255,255,.7);
+      font-weight: 900;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      transition: transform .06s ease, filter .2s ease;
+    }
+    .chip:active{ transform: scale(.98); }
+    .chip.on{
+      border-color: rgba(255,77,136,.35);
+      box-shadow: 0 12px 28px rgba(255,77,136,.12);
+      background: rgba(255,179,199,.18);
+    }
+
+    .inputs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 560px){
+      .inputs{ grid-template-columns: 1fr; }
+    }
+    .field{
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(58,27,46,.10);
+      border-radius: 16px;
+      padding: 10px 12px;
+    }
+    .field label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .field input{
+      width:100%;
+      font-family: "Nunito", sans-serif;
+      font-weight: 900;
+      font-size: 14px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(58,27,46,.12);
+      outline:none;
+      background: rgba(255,255,255,.85);
+      color: var(--plum);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(58,27,46,.92);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.20);
+      font-weight: 800;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 9999;
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    .footer-note{
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(58,27,46,.70);
+      font-weight: 700;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(58,27,46,.06);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"><span>🌸</span></div>
+        <div class="title">
+          <h1>Blossom Cycle</h1>
+          <p>Sweet, simple cycle tracking — on this device only</p>
+        </div>
+      </div>
+      <div class="pill" id="todayPill">Today: —</div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <section class="card">
+        <h2>✨ Today</h2>
+        <p class="sub" id="statusLine">Let’s get you set up.</p>
+
+        <div class="row">
+          <button class="btn btn-primary" id="btnStart"><span>🩸</span>Period started</button>
+          <button class="btn btn-mint" id="btnEnd"><span>✅</span>Period ended</button>
+          <button class="btn btn-ghost" id="btnLog"><span>📝</span>Daily check-in</button>
+          <button class="btn btn-danger" id="btnReset"><span>🧼</span>Reset (local)</button>
+        </div>
+
+        <div class="kpi" aria-label="Predictions">
+          <div class="tile">
+            <div class="label">NEXT PERIOD (EST.)</div>
+            <div class="value" id="kpiNext">—</div>
+          </div>
+          <div class="tile">
+            <div class="label">FERTILE WINDOW (EST.)</div>
+            <div class="value" id="kpiFert">—</div>
+          </div>
+          <div class="tile">
+            <div class="label">AVG CYCLE / PERIOD</div>
+            <div class="value" id="kpiAvg">—</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>📅 Calendar</h2>
+        <div class="cal-head">
+          <button class="btn btn-ghost" id="prevMonth">◀</button>
+          <div class="month" id="monthLabel">—</div>
+          <button class="btn btn-ghost" id="nextMonth">▶</button>
+        </div>
+
+        <div class="cal-grid" id="dowRow"></div>
+        <div class="cal-grid calendar" id="calGrid"></div>
+
+        <div class="footer-note">
+          <strong>Friendly note:</strong> predictions are estimates based on averages and may be off (stress, illness, growth, travel, etc. can shift cycles).
+          If bleeding is very heavy, pain is severe, periods are absent for months, or there are concerns—talk with a trusted adult and a clinician.
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="card">
+        <h2>🎀 Setup</h2>
+        <p class="sub">Make it yours (you can change these anytime).</p>
+
+        <div class="inputs">
+          <div class="field">
+            <label for="cycleLen">Average cycle length (days)</label>
+            <input id="cycleLen" type="number" min="15" max="60" placeholder="Example: 28">
+          </div>
+          <div class="field">
+            <label for="periodLen">Typical period length (days)</label>
+            <input id="periodLen" type="number" min="1" max="12" placeholder="Example: 5">
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn btn-primary" id="btnSave"><span>💾</span>Save setup</button>
+          <button class="btn btn-ghost" id="btnDemo"><span>🧁</span>Load demo data</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>💖 Daily check-in</h2>
+        <p class="tiny">Tap what fits today (fast + no big forms).</p>
+
+        <div class="tiny" style="margin:10px 0 6px;">Mood</div>
+        <div class="chips" id="moodChips"></div>
+
+        <div class="tiny" style="margin:12px 0 6px;">Symptoms</div>
+        <div class="chips" id="symptomChips"></div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="btn btn-mint" id="btnSaveCheckin"><span>🌟</span>Save check-in</button>
+          <button class="btn btn-ghost" id="btnClearCheckin"><span>🫧</span>Clear</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2>🔒 Privacy</h2>
+        <p class="tiny">
+          This prototype stores data <strong>only in your browser</strong> (localStorage). No accounts. No cloud. No tracking.
+          If you want, we can add a simple PIN screen next.
+        </p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved!</div>
+
+<script>
+  // -----------------------------
+  // Data model (local-only)
+  // -----------------------------
+  const STORAGE_KEY = "blossom_cycle_v1";
+
+  const defaultState = () => ({
+    settings: {
+      avgCycleLen: 28,
+      avgPeriodLen: 5
+    },
+    periods: [
+      // { start: "YYYY-MM-DD", end: "YYYY-MM-DD" | null }
+    ],
+    checkins: {
+      // "YYYY-MM-DD": { mood: [..], symptoms: [..] }
+    }
+  });
+
+  function loadState(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    try{
+      const parsed = JSON.parse(raw);
+      return { ...defaultState(), ...parsed };
+    }catch{
+      return defaultState();
+    }
+  }
+
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  let state = loadState();
+
+  // -----------------------------
+  // Utilities
+  // -----------------------------
+  const pad = (n) => String(n).padStart(2, "0");
+  function toISODate(d){
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function fromISODate(s){
+    const [y,m,dd] = s.split("-").map(Number);
+    return new Date(y, m-1, dd);
+  }
+  function addDays(date, days){
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+  function fmtShort(iso){
+    if(!iso) return "—";
+    const d = fromISODate(iso);
+    return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+  }
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1400);
+  }
+
+  // -----------------------------
+  // Prediction logic (simple averages)
+  // -----------------------------
+  function getLastPeriod(){
+    if(!state.periods.length) return null;
+    // Last by start date
+    const sorted = [...state.periods].sort((a,b)=>a.start.localeCompare(b.start));
+    return sorted[sorted.length - 1];
+  }
+
+  function estimateNextPeriodStart(){
+    const last = getLastPeriod();
+    if(!last) return null;
+    const start = fromISODate(last.start);
+    const next = addDays(start, Number(state.settings.avgCycleLen || 28));
+    return toISODate(next);
+  }
+
+  function estimateNextPeriodWindow(){
+    const nextStart = estimateNextPeriodStart();
+    if(!nextStart) return null;
+    const s = fromISODate(nextStart);
+    const len = Number(state.settings.avgPeriodLen || 5);
+    const e = addDays(s, Math.max(len-1, 0));
+    return { start: toISODate(s), end: toISODate(e) };
+  }
+
+  function estimateFertileWindow(){
+    // Common teaching estimate: ovulation ~14 days before next period in a typical cycle.
+    // This varies widely; we label as estimate.
+    const nextStart = estimateNextPeriodStart();
+    if(!nextStart) return null;
+    const next = fromISODate(nextStart);
+    const ovulation = addDays(next, -14);
+    // Fertile window often approximated as 5 days before ovulation through ovulation day.
+    const start = addDays(ovulation, -5);
+    const end = ovulation;
+    return { start: toISODate(start), end: toISODate(end), ovu: toISODate(ovulation) };
+  }
+
+  function isDateInRange(iso, range){
+    if(!range) return false;
+    return iso >= range.start && iso <= range.end;
+  }
+
+  function getPeriodDatesSet(){
+    const set = new Set();
+    for(const p of state.periods){
+      if(!p.start) continue;
+      const start = fromISODate(p.start);
+      const end = p.end ? fromISODate(p.end) : start; // if ongoing, mark start only
+      let cur = new Date(start);
+      while(cur <= end){
+        set.add(toISODate(cur));
+        cur = addDays(cur, 1);
+      }
+    }
+    return set;
+  }
+
+  // -----------------------------
+  // UI: Setup + Today header
+  // -----------------------------
+  const today = new Date();
+  const todayISO = toISODate(today);
+
+  function refreshHeader(){
+    document.getElementById("todayPill").textContent =
+      `Today: ${today.toLocaleDateString(undefined, { weekday:"short", month:"short", day:"numeric" })}`;
+
+    // Status line
+    const last = getLastPeriod();
+    let status = "Tap “Daily check-in” to log mood + symptoms ✨";
+    if(last?.start && !last.end){
+      status = `You’re currently on your period (started ${fmtShort(last.start)}).`;
+    } else if(last?.end){
+      status = `Last period ended ${fmtShort(last.end)}.`;
+    } else if(!state.periods.length){
+      status = "Start by saving setup, then tap “Period started” when it begins.";
+    }
+    document.getElementById("statusLine").textContent = status;
+
+    // KPIs
+    const next = estimateNextPeriodStart();
+    const fert = estimateFertileWindow();
+    document.getElementById("kpiNext").textContent = next ? fmtShort(next) : "—";
+    if(fert){
+      document.getElementById("kpiFert").textContent =
+        `${fmtShort(fert.start)}–${fmtShort(fert.end)} (ovu ~ ${fmtShort(fert.ovu)})`;
+    } else {
+      document.getElementById("kpiFert").textContent = "—";
+    }
+    document.getElementById("kpiAvg").textContent =
+      `${state.settings.avgCycleLen}d / ${state.settings.avgPeriodLen}d`;
+  }
+
+  function bindSetup(){
+    const cycle = document.getElementById("cycleLen");
+    const period = document.getElementById("periodLen");
+    cycle.value = state.settings.avgCycleLen;
+    period.value = state.settings.avgPeriodLen;
+
+    document.getElementById("btnSave").addEventListener("click", ()=>{
+      const c = Number(cycle.value);
+      const p = Number(period.value);
+
+      // Basic guardrails
+      if(!Number.isFinite(c) || c < 15 || c > 60){
+        toast("Cycle length looks off (15–60).");
+        return;
+      }
+      if(!Number.isFinite(p) || p < 1 || p > 12){
+        toast("Period length looks off (1–12).");
+        return;
+      }
+
+      state.settings.avgCycleLen = c;
+      state.settings.avgPeriodLen = p;
+      saveState();
+      toast("Saved setup!");
+      refreshAll();
+    });
+
+    document.getElementById("btnDemo").addEventListener("click", ()=>{
+      // Demo data: two periods
+      const t = new Date();
+      const p1s = toISODate(addDays(t, -55));
+      const p1e = toISODate(addDays(t, -51));
+      const p2s = toISODate(addDays(t, -27));
+      const p2e = toISODate(addDays(t, -23));
+
+      state.settings.avgCycleLen = 28;
+      state.settings.avgPeriodLen = 5;
+      state.periods = [
+        { start: p1s, end: p1e },
+        { start: p2s, end: p2e }
+      ];
+      state.checkins = {};
+      saveState();
+      toast("Demo loaded!");
+      refreshAll();
+    });
+  }
+
+  // -----------------------------
+  // Period logging
+  // -----------------------------
+  function startPeriod(){
+    const last = getLastPeriod();
+    if(last && !last.end){
+      toast("Period already in progress.");
+      return;
+    }
+    state.periods.push({ start: todayISO, end: null });
+    saveState();
+    toast("Logged: started!");
+    refreshAll();
+  }
+
+  function endPeriod(){
+    const last = getLastPeriod();
+    if(!last || last.end){
+      toast("No active period to end.");
+      return;
+    }
+    last.end = todayISO;
+    saveState();
+    toast("Logged: ended!");
+    refreshAll();
+  }
+
+  // -----------------------------
+  // Check-in chips
+  // -----------------------------
+  const moods = [
+    { key:"happy", label:"😊 Happy" },
+    { key:"okay", label:"🙂 Okay" },
+    { key:"tired", label:"🥱 Tired" },
+    { key:"stressed", label:"😵‍💫 Stressed" },
+    { key:"sad", label:"😔 Sad" },
+    { key:"confident", label:"😌 Confident" },
+    { key:"irritable", label:"😤 Irritable" }
+  ];
+
+  const symptoms = [
+    { key:"cramps", label:"🔥 Cramps" },
+    { key:"headache", label:"🤕 Headache" },
+    { key:"bloating", label:"🎈 Bloating" },
+    { key:"acne", label:"🌙 Acne" },
+    { key:"tender", label:"💗 Tender boobs" },
+    { key:"nausea", label:"🤢 Nausea" },
+    { key:"backache", label:"🧍 Backache" },
+    { key:"sleepy", label:"🛌 Sleepy" }
+  ];
+
+  let selectedMood = new Set();
+  let selectedSymptoms = new Set();
+
+  function renderChips(containerId, items, selectedSet){
+    const el = document.getElementById(containerId);
+    el.innerHTML = "";
+    items.forEach(item=>{
+      const c = document.createElement("div");
+      c.className = "chip" + (selectedSet.has(item.key) ? " on" : "");
+      c.textContent = item.label;
+      c.addEventListener("click", ()=>{
+        if(selectedSet.has(item.key)) selectedSet.delete(item.key);
+        else selectedSet.add(item.key);
+        renderChips(containerId, items, selectedSet);
+      });
+      el.appendChild(c);
+    });
+  }
+
+  function loadCheckinForToday(){
+    const existing = state.checkins[todayISO];
+    selectedMood = new Set(existing?.mood || []);
+    selectedSymptoms = new Set(existing?.symptoms || []);
+    renderChips("moodChips", moods, selectedMood);
+    renderChips("symptomChips", symptoms, selectedSymptoms);
+  }
+
+  function saveCheckin(){
+    state.checkins[todayISO] = {
+      mood: [...selectedMood],
+      symptoms: [...selectedSymptoms]
+    };
+    saveState();
+    toast("Check-in saved!");
+  }
+
+  function clearCheckin(){
+    selectedMood.clear();
+    selectedSymptoms.clear();
+    renderChips("moodChips", moods, selectedMood);
+    renderChips("symptomChips", symptoms, selectedSymptoms);
+    toast("Cleared!");
+  }
+
+  // -----------------------------
+  // Calendar rendering
+  // -----------------------------
+  let viewYear = today.getFullYear();
+  let viewMonth = today.getMonth(); // 0-based
+
+  const dows = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  function renderDows(){
+    const row = document.getElementById("dowRow");
+    row.innerHTML = "";
+    dows.forEach(d=>{
+      const div = document.createElement("div");
+      div.className = "dow";
+      div.textContent = d;
+      row.appendChild(div);
+    });
+  }
+
+  function renderCalendar(){
+    const label = document.getElementById("monthLabel");
+    const first = new Date(viewYear, viewMonth, 1);
+    label.textContent = first.toLocaleDateString(undefined, { month:"long", year:"numeric" });
+
+    const grid = document.getElementById("calGrid");
+    grid.innerHTML = "";
+
+    const startDow = first.getDay();
+    const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+    const periodSet = getPeriodDatesSet();
+    const predPeriod = estimateNextPeriodWindow();
+    const fert = estimateFertileWindow();
+
+    // Blank days before month starts
+    for(let i=0;i<startDow;i++){
+      const blank = document.createElement("div");
+      blank.className = "day";
+      blank.style.opacity = "0";
+      grid.appendChild(blank);
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(viewYear, viewMonth, day);
+      const iso = toISODate(d);
+
+      const cell = document.createElement("div");
+      cell.className = "day";
+
+      const num = document.createElement("div");
+      num.className = "num";
+      num.textContent = day;
+      cell.appendChild(num);
+
+      // Stickers/badges
+      if(periodSet.has(iso)){
+        const b = document.createElement("div");
+        b.className = "badge b-period";
+        b.textContent = "🩸 Period";
+        cell.appendChild(b);
+      } else if(isDateInRange(iso, predPeriod)){
+        const b = document.createElement("div");
+        b.className = "badge b-pred";
+        b.textContent = "🎀 Pred";
+        cell.appendChild(b);
+      } else if(isDateInRange(iso, fert)){
+        const b = document.createElement("div");
+        b.className = "badge b-fert";
+        b.textContent = "🌿 Fertile";
+        cell.appendChild(b);
+      }
+
+      // Mini indicator for check-in
+      const ci = state.checkins[iso];
+      if(ci && (ci.mood?.length || ci.symptoms?.length)){
+        const b = document.createElement("div");
+        b.className = "badge";
+        b.style.background = "rgba(255,255,255,.65)";
+        b.style.border = "1px solid rgba(58,27,46,.10)";
+        b.style.color = "rgba(58,27,46,.85)";
+        b.textContent = "⭐ Check-in";
+        cell.appendChild(b);
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  // -----------------------------
+  // Buttons
+  // -----------------------------
+  function bindActions(){
+    document.getElementById("btnStart").addEventListener("click", startPeriod);
+    document.getElementById("btnEnd").addEventListener("click", endPeriod);
+
+    document.getElementById("btnLog").addEventListener("click", ()=>{
+      // Scroll to the check-in area (right panel)
+      document.querySelector("aside.card").scrollIntoView({ behavior:"smooth", block:"start" });
+      toast("Check-in is on the right!");
+    });
+
+    document.getElementById("btnSaveCheckin").addEventListener("click", saveCheckin);
+    document.getElementById("btnClearCheckin").addEventListener("click", clearCheckin);
+
+    document.getElementById("prevMonth").addEventListener("click", ()=>{
+      viewMonth--;
+      if(viewMonth < 0){ viewMonth = 11; viewYear--; }
+      renderCalendar();
+    });
+    document.getElementById("nextMonth").addEventListener("click", ()=>{
+      viewMonth++;
+      if(viewMonth > 11){ viewMonth = 0; viewYear++; }
+      renderCalendar();
+    });
+
+    document.getElementById("btnReset").addEventListener("click", ()=>{
+      // Local reset only
+      localStorage.removeItem(STORAGE_KEY);
+      state = defaultState();
+      toast("Reset done (local).");
+      refreshAll();
+    });
+  }
+
+  // -----------------------------
+  // Refresh
+  // -----------------------------
+  function refreshAll(){
+    refreshHeader();
+    renderDows();
+    renderCalendar();
+    // sync setup fields
+    document.getElementById("cycleLen").value = state.settings.avgCycleLen;
+    document.getElementById("periodLen").value = state.settings.avgPeriodLen;
+    loadCheckinForToday();
+  }
+
+  // Init
+  bindSetup();
+  bindActions();
+  refreshAll();
+</script>
+</body>
+</html>
