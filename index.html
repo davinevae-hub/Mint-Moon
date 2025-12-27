@@ -11,9 +11,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <!-- Optional: if you add icons later -->
-  <!-- <link rel="apple-touch-icon" href="icons/icon-192.png"> -->
-
   <!-- Cute fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -414,6 +411,9 @@
 
 <body>
   <div class="app">
+    <!-- HOME ANCHOR -->
+    <div id="homeTop"></div>
+
     <header>
       <div class="brand">
         <div class="logo" aria-hidden="true"><span>🌸</span></div>
@@ -436,9 +436,8 @@
       <ol class="steps">
         <li>When your period starts, tap <strong>“Period started”</strong>.</li>
         <li>When it ends, tap <strong>“Period ended”</strong>.</li>
-        <li>If you want, do a <strong>Daily check-in</strong> (mood + symptoms).</li>
-        <li>Want quick access? Tap <strong>“Add to Home Screen”</strong> on the right.</li>
-        <li>Need a copy? Tap <strong>“Download this month”</strong> to save/print.</li>
+        <li>If you want, do a <strong>Daily check-in</strong> (mood + body).</li>
+        <li>Tap <strong>Calendar</strong> to see the month.</li>
       </ol>
 
       <div class="footer-note">
@@ -457,6 +456,7 @@
           <button class="btn btn-primary" id="btnStart"><span>🩸</span>Period started</button>
           <button class="btn btn-mint" id="btnEnd"><span>✅</span>Period ended</button>
           <button class="btn btn-ghost" id="btnLog"><span>📝</span>Daily check-in</button>
+          <button class="btn btn-ghost" id="btnGoCalendar"><span>📅</span>Calendar</button>
           <button class="btn btn-danger" id="btnReset"><span>🧼</span>Reset (local)</button>
         </div>
 
@@ -477,7 +477,10 @@
 
         <div class="divider"></div>
 
+        <!-- CALENDAR ANCHOR -->
+        <div id="calendarTop"></div>
         <h2>📅 Calendar</h2>
+
         <div class="cal-head">
           <button class="btn btn-ghost" id="prevMonth">◀</button>
           <div class="month" id="monthLabel">—</div>
@@ -485,7 +488,7 @@
         </div>
 
         <div class="row" style="margin-bottom:10px;">
-          <button class="btn btn-primary" id="btnDownloadMonth"><span>📥</span>Download this month</button>
+          <button class="btn btn-ghost" id="btnBackHome"><span>🏠</span>Back to Home</button>
           <button class="btn btn-ghost" id="btnPrintMonth"><span>🖨️</span>Print this month</button>
         </div>
 
@@ -589,12 +592,11 @@
     btnInstall.style.display = "none";
   });
 
-  // Helpful iOS text detection
+  // iOS Safari hint
   (function(){
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
     const isSafari = isIOS && /safari/i.test(navigator.userAgent) && !/crios|fxios|opios/i.test(navigator.userAgent);
     const help = document.getElementById("installHelp");
-
     if (isIOS && !isSafari) {
       help.textContent = "On iPhone, open this in Safari, then Share → Add to Home Screen.";
     }
@@ -603,7 +605,7 @@
   // -----------------------------
   // Data model (local-only)
   // -----------------------------
-  const STORAGE_KEY = "blossom_cycle_v2";
+  const STORAGE_KEY = "blossom_cycle_v3";
 
   const defaultState = () => ({
     settings: { avgCycleLen: 28, avgPeriodLen: 5 },
@@ -684,15 +686,14 @@
   }
 
   function estimateGreenDays(){
-    // Teen-friendly phrasing: “green days” = days your body *might* be more active.
-    // Estimate ovulation ~ 14 days before next period (varies a lot).
+    // Teen-friendly: “Green days” are a guess of days your body *might* be more active.
     const nextStart = estimateNextPeriodStart();
     if(!nextStart) return null;
     const next = fromISODate(nextStart);
-    const ovulationGuess = addDays(next, -14);
-    const start = addDays(ovulationGuess, -5);
-    const end = ovulationGuess;
-    return { start: toISODate(start), end: toISODate(end), mid: toISODate(ovulationGuess) };
+    const mid = addDays(next, -14);
+    const start = addDays(mid, -5);
+    const end = mid;
+    return { start: toISODate(start), end: toISODate(end) };
   }
 
   function isDateInRange(iso, range){
@@ -740,14 +741,7 @@
     const green = estimateGreenDays();
 
     document.getElementById("kpiNext").textContent = next ? fmtShort(next) : "—";
-
-    if(green){
-      document.getElementById("kpiFert").textContent =
-        `${fmtShort(green.start)}–${fmtShort(green.end)}`;
-    } else {
-      document.getElementById("kpiFert").textContent = "—";
-    }
-
+    document.getElementById("kpiFert").textContent = green ? `${fmtShort(green.start)}–${fmtShort(green.end)}` : "—";
     document.getElementById("kpiAvg").textContent =
       `${state.settings.avgCycleLen} days • period ~ ${state.settings.avgPeriodLen} days`;
   }
@@ -765,7 +759,6 @@
       const c = safeNum(cycle.value);
       const p = safeNum(period.value);
 
-      // Basic guardrails (teen-friendly messaging)
       if(c === null || c < 15 || c > 60){
         toast("Try a number like 21–35.");
         return;
@@ -830,7 +823,7 @@
   }
 
   // -----------------------------
-  // Check-in chips (simple words)
+  // Check-in chips
   // -----------------------------
   const moods = [
     { key:"happy", label:"😊 Happy" },
@@ -887,7 +880,7 @@
     };
     saveState();
     toast("Check-in saved!");
-    refreshAll(); // so calendar shows ⭐
+    refreshAll();
   }
 
   function clearCheckin(){
@@ -899,7 +892,7 @@
   }
 
   // -----------------------------
-  // Calendar
+  // Calendar rendering
   // -----------------------------
   let viewYear = today.getFullYear();
   let viewMonth = today.getMonth(); // 0-based
@@ -981,11 +974,18 @@
   }
 
   // -----------------------------
-  // Download / Print monthly calendar
-  // - Downloads an HTML file for the current month.
-  // - User can open it and "Print to PDF" on phone/desktop.
+  // Print month (opens a printable page)
   // -----------------------------
-  function buildMonthExportHTML(year, month){
+  function escapeHTML(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function buildMonthPrintHTML(year, month){
     const first = new Date(year, month, 1);
     const monthName = first.toLocaleDateString(undefined, { month:"long", year:"numeric" });
     const startDow = first.getDay();
@@ -995,10 +995,8 @@
     const predPeriod = estimateNextPeriodWindow();
     const green = estimateGreenDays();
 
-    // Build a simple printable grid
     let cells = "";
 
-    // Blank cells
     for(let i=0;i<startDow;i++){
       cells += `<div class="cell blank"></div>`;
     }
@@ -1013,11 +1011,9 @@
       if(!periodSet.has(iso) && isDateInRange(iso, green)) tags.push(`<span class="tag green">🌿 Green</span>`);
 
       const ci = state.checkins[iso];
-      if(ci && (ci.mood?.length || ci.symptoms?.length)) tags.push(`<span class="tag check">⭐ Check-in</span>`);
-
-      // Optional: include check-in details (short)
       let details = "";
-      if(ci){
+      if(ci && (ci.mood?.length || ci.symptoms?.length)){
+        tags.push(`<span class="tag check">⭐ Check-in</span>`);
         const moodText = (ci.mood || []).map(k => (moods.find(m=>m.key===k)?.label || k)).join(", ");
         const symText  = (ci.symptoms || []).map(k => (symptoms.find(s=>s.key===k)?.label || k)).join(", ");
         const lines = [];
@@ -1067,7 +1063,7 @@
 </head>
 <body>
   <h1>${monthName}</h1>
-  <p class="note">This is your monthly calendar from Blossom Cycle. You can print this page to save as a PDF.</p>
+  <p class="note">Monthly calendar from Blossom Cycle. You can print this page to save as a PDF.</p>
 
   <div class="grid">
     <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
@@ -1081,45 +1077,28 @@
 </html>`;
   }
 
-  function escapeHTML(str){
-    return String(str)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
-
-  function downloadTextFile(filename, content, mime="text/html"){
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function downloadThisMonth(){
-    const first = new Date(viewYear, viewMonth, 1);
-    const filename = `BlossomCycle_${first.getFullYear()}-${pad(first.getMonth()+1)}.html`;
-    const html = buildMonthExportHTML(viewYear, viewMonth);
-    downloadTextFile(filename, html, "text/html");
-    toast("Downloaded! Open it and print to PDF if you want.");
-  }
-
   function printThisMonth(){
-    // Open printable view in a new tab and trigger print
-    const html = buildMonthExportHTML(viewYear, viewMonth);
+    const html = buildMonthPrintHTML(viewYear, viewMonth);
     const w = window.open("", "_blank");
-    if(!w){ toast("Pop-up blocked. Try download instead."); return; }
+    if(!w){ toast("Pop-up blocked. Try again or allow pop-ups."); return; }
     w.document.open();
     w.document.write(html);
     w.document.close();
     w.focus();
-    setTimeout(()=>w.print(), 400);
+    setTimeout(()=>w.print(), 450);
+  }
+
+  // -----------------------------
+  // Navigation helpers
+  // -----------------------------
+  function goHome(){
+    document.getElementById("homeTop").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+  function goCalendar(){
+    document.getElementById("calendarTop").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+  function goCheckin(){
+    document.querySelector("aside.card").scrollIntoView({ behavior:"smooth", block:"start" });
   }
 
   // -----------------------------
@@ -1130,8 +1109,18 @@
     document.getElementById("btnEnd").addEventListener("click", endPeriod);
 
     document.getElementById("btnLog").addEventListener("click", ()=>{
-      document.querySelector("aside.card").scrollIntoView({ behavior:"smooth", block:"start" });
+      goCheckin();
       toast("Check-in is on the right!");
+    });
+
+    document.getElementById("btnGoCalendar").addEventListener("click", ()=>{
+      goCalendar();
+      toast("Calendar!");
+    });
+
+    document.getElementById("btnBackHome").addEventListener("click", ()=>{
+      goHome();
+      toast("Back to home!");
     });
 
     document.getElementById("btnSaveCheckin").addEventListener("click", saveCheckin);
@@ -1142,13 +1131,13 @@
       if(viewMonth < 0){ viewMonth = 11; viewYear--; }
       renderCalendar();
     });
+
     document.getElementById("nextMonth").addEventListener("click", ()=>{
       viewMonth++;
       if(viewMonth > 11){ viewMonth = 0; viewYear++; }
       renderCalendar();
     });
 
-    document.getElementById("btnDownloadMonth").addEventListener("click", downloadThisMonth);
     document.getElementById("btnPrintMonth").addEventListener("click", printThisMonth);
 
     document.getElementById("btnReset").addEventListener("click", ()=>{
@@ -1156,6 +1145,7 @@
       state = defaultState();
       toast("Reset done (only on this device).");
       refreshAll();
+      goHome();
     });
   }
 
